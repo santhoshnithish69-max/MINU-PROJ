@@ -1,0 +1,168 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    background-color: #0a0b2e;
+    height: 100vh;
+}
+
+/* MAIN */
+.container {
+    height: 100%;
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* LOGO */
+.logo {
+    display: flex;
+    align-items: center;
+    margin-top: 10vh;
+}
+
+.icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 10px;
+}
+
+.circle {
+    width: 18px;
+    height: 18px;
+    background-color: #f5a623;
+    border-radius: 50%;
+    margin: 2px;
+}
+
+.square {
+    width: 22px;
+    height: 22px;
+    background-color: #f5a623;
+    margin-top: 4px;
+}
+
+.legs {
+    width: 18px;
+    height: 18px;
+    background-color: #f5a623;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    margin-top: 4px;
+}
+
+.text h1 {
+    font-size: 8vw;
+    color: white;
+}
+
+.bar {
+    margin-top: -8px;
+}
+
+.yellow {
+    color: #f5a623;
+}
+
+/* TITLE */
+.title {
+    color: white;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    font-size: 5vw;
+}
+
+/* INPUT */
+.input-box {
+    width: 100%;
+    max-width: 320px;
+    background: #5a5d73;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    margin: 10px 0;
+}
+
+.icon-left {
+    margin-right: 10px;
+    color: #f5a623;
+}
+
+.input-box input {
+    border: none;
+    outline: none;
+    background: transparent;
+    color: white;
+    width: 100%;
+    font-size: 16px;
+}
+
+.auth-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.auth-message {
+    width: 100%;
+    max-width: 320px;
+    min-height: 18px;
+    margin-top: 6px;
+    color: #bcbcc5;
+    font-size: 13px;
+    text-align: center;
+}
+
+.auth-message.error {
+    color: #ff8f8f;
+}
+
+.auth-message.success {
+    color: #8ee0ae;
+}
+
+/* BUTTON */
+.btn {
+    margin-top: 20px;
+    padding: 12px;
+    width: 60%;
+    max-width: 220px;
+    border: none;
+    border-radius: 12px;
+    background: #6c6f87;
+    color: white;
+    font-size: 16px;
+}
+
+/* TEXT */
+.small-text {
+    color: #bcbcc5;
+    margin-top: 20px;
+    font-size: 12px;
+}
+
+/* CREATE BUTTON */
+.create-btn {
+    margin-top: 10px;
+    padding: 10px 20px;
+    border-radius: 12px;
+    border: none;
+    background: #6c6f87;
+    color: white;
+    cursor: pointer;
+
+}
+
+.btn:disabled,
+.create-btn:disabled {
+    cursor: wait;
+    opacity: 0.7;
+}

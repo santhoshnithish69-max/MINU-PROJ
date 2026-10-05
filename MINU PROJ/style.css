@@ -1,0 +1,104 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* FULL MOBILE SCREEN */
+body {
+    height: 100vh;
+    background-color: #0a0b2e;
+}
+
+/* MAIN CONTAINER */
+.container {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* LOGO POSITION */
+.logo {
+    display: flex;
+    align-items: center;
+    margin-top: 20vh; /* pushes logo down like your design */
+}
+
+/* ICON */
+.icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 12px;
+}
+
+.circle {
+    width: 18px;
+    height: 18px;
+    background-color: #f5a623;
+    border-radius: 50%;
+    margin: 2px;
+}
+
+.square {
+    width: 22px;
+    height: 22px;
+    background-color: #f5a623;
+    margin-top: 4px;
+}
+
+.legs {
+    width: 18px;
+    height: 18px;
+    background-color: #f5a623;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    margin-top: 4px;
+}
+
+/* TEXT */
+.text h1 {
+    font-size: 8vw; /* responsive font */
+    letter-spacing: 2px;
+}
+
+.bar {
+    margin-top: -8px;
+}
+
+.white {
+    color: white;
+}
+
+.yellow {
+    color: #f5a623;
+}
+
+/* BUTTON */
+.btn {
+    margin-bottom: 40px;
+    padding: 14px 0;
+    width: 70%;
+    max-width: 260px;
+
+    border: none;
+    border-radius: 12px;
+
+    background-color: #6c6f87;
+    color: white;
+
+    font-size: 4.5vw;
+    max-font-size: 16px;
+
+    cursor: pointer;
+}
+
+/* TOUCH FEEDBACK */
+.btn:active {
+    transform: scale(0.97);
+    cursor: pointer;
+
+}

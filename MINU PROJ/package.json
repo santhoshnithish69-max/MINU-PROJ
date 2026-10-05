@@ -1,0 +1,29 @@
+{
+  "name": "minu-proj",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "vite --host 0.0.0.0",
+    "dev": "vite"
+  },
+  "dependencies": {
+    "compromise": "^14.15.0",
+    "@supabase/supabase-js": "^2.57.4",
+    "three": "^0.184.0",
+    "vite": "^8.0.9"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sachinmediaworks2021-alt/MINU-PROJ.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sachinmediaworks2021-alt/MINU-PROJ/issues"
+  },
+  "homepage": "https://github.com/sachinmediaworks2021-alt/MINU-PROJ#readme"
+}

@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home</title>
+
+<link rel="stylesheet" href="home.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+<style>
+/* ── MIC BUTTON SECTION ─────────────────────────── */
+.voice-section {
+    margin: 18px 0 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.mic-btn {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f5a623, #c47d0e);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(245,166,35,0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+    padding: 14px;
+}
+
+.mic-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+    pointer-events: none;
+}
+
+.mic-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 28px rgba(245,166,35,0.55);
+}
+
+.mic-btn.listening {
+    animation: micPulse 1.1s infinite;
+    background: linear-gradient(135deg, #ff4f6d, #c0003b);
+}
+
+@keyframes micPulse {
+    0%   { box-shadow: 0 0 0 0 rgba(255,79,109,0.55); }
+    70%  { box-shadow: 0 0 0 22px rgba(255,79,109,0); }
+    100% { box-shadow: 0 0 0 0 rgba(255,79,109,0); }
+}
+
+.mic-hint {
+    font-size: 12px;
+    color: #6b7194;
+    letter-spacing: 0.5px;
+}
+
+/* ── VOICE TOAST ────────────────────────────────── */
+#voiceToast {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #0e1230;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 18px;
+    padding: 16px 20px;
+    min-width: 270px;
+    max-width: 340px;
+    text-align: center;
+    font-size: 13px;
+    color: #e8eaf6;
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none;
+    z-index: 999;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+
+#voiceToast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: all;
+}
+
+.toast-status {
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    font-weight: 700;
+}
+.toast-status.listen { color: #ff4f6d; }
+.toast-status.think  { color: #f5a623; }
+.toast-status.done   { color: #00e5a0; }
+.toast-status.error  { color: #ff4f6d; }
+
+.toast-text {
+    color: #aab0d0;
+    font-style: italic;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.toast-result {
+    display: none;
+    margin-top: 10px;
+    background: rgba(245,166,35,0.1);
+    border: 1px solid rgba(245,166,35,0.2);
+    border-radius: 10px;
+    padding: 9px 12px;
+    font-size: 13px;
+    color: #f5a623;
+    font-weight: 500;
+    line-height: 1.9;
+    text-align: left;
+}
+.toast-result.show { display: block; }
+
+/* movie name highlight inside toast */
+.movie-name-tag {
+    display: inline-block;
+    background: rgba(245,166,35,0.2);
+    border: 1px solid rgba(245,166,35,0.35);
+    border-radius: 6px;
+    padding: 1px 8px;
+    font-weight: 700;
+    color: #ffd280;
+    font-size: 13px;
+}
+
+.toast-not-found {
+    display: none;
+    margin-top: 8px;
+    background: rgba(255,79,109,0.1);
+    border: 1px solid rgba(255,79,109,0.2);
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 12px;
+    color: #ff8fa0;
+    line-height: 1.6;
+}
+.toast-not-found.show { display: block; }
+
+.toast-confirm {
+    display: none;
+    margin-top: 12px;
+    width: 100%;
+    padding: 11px;
+    background: linear-gradient(135deg, #f5a623, #c47d0e);
+    border: none;
+    border-radius: 10px;
+    color: #0a0b2e;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: opacity 0.2s;
+}
+.toast-confirm:hover { opacity: 0.88; }
+.toast-confirm.show  { display: block; }
+
+.loader-dot {
+    display: inline-block;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #f5a623;
+    margin: 0 2px;
+    animation: dotBounce 0.8s infinite;
+}
+.loader-dot:nth-child(2) { animation-delay: 0.15s; }
+.loader-dot:nth-child(3) { animation-delay: 0.30s; }
+
+@keyframes dotBounce {
+    0%,80%,100% { transform: scale(0.7); opacity: 0.5; }
+    40%          { transform: scale(1.2); opacity: 1;   }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+    <h2 class="title">Choose a <span>Movie</span></h2>
+
+    <!-- SEARCH -->
+    <div class="search-box">
+        <input type="text" placeholder="Search">
+    </div>
+
+    <!-- NOW PLAYING -->
+    <h3 class="section">Now Playing</h3>
+    <div class="row">
+        <img src="IMAGES/SaveClip.App_616149348_18447177064098908_5096501549668335258_n.jpg"
+             class="movie" onclick="">
+        <img src="IMAGES/dhurandhar 2 poster is out!!.jpeg"
+             class="movie" onclick="openMovie('Dhurandhar')">
+        <img src="IMAGES/vaazha-2-new-poster-v0-sspr8zjx4nng1.webp"
+             class="movie" onclick="openMovie('Vaazha')">
+        <img src="IMAGES/new-poster-for-project-hail-mary-v0-inevnoywsbig1.webp"
+             class="movie" onclick="openMovie('Project Hail Mary')">
+    </div>
+
+    <!-- UPCOMING -->
+    <h3 class="section">Upcoming Movies</h3>
+    <div class="row">
+        <img src="IMAGES\G9lB-agaMAM2_1c.jpeg"
+             class="movie" onclick="openMovie('Karuppu')">
+        <img src="IMAGES/MV5BNDUzOGQyNTEtZDlhOC00OTRlLThiNzMtMWI5NDliYWVhMTllXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg"
+             class="movie" onclick="openMovie('Kara')">
+        <img src="IMAGES/MV5BNGJiZjE5ZDktZTRhMy00NDM3LWIwNzItNWQ3MjJhZDRlNDllXkEyXkFqcGc@._V1_.jpg"
+             class="movie" onclick="openMovie('Paiyan')">
+    </div>
+
+    <!-- TOP RATED -->
+    <h3 class="section">Top Rated Movies</h3>
+    <div class="row">
+        <img src="IMAGES/new-poster-for-project-hail-mary-v0-inevnoywsbig1.webp"
+             class="movie" onclick="openMovie('Project Hail Mary')">
+        <img src="IMAGES/vaazha-2-new-poster-v0-sspr8zjx4nng1.webp"
+             class="movie" onclick="openMovie('Vaazha')">
+        <img src="IMAGES/SaveClip.App_616149348_18447177064098908_5096501549668335258_n.jpg"
+             class="movie" onclick="openMovie('Youth')">
+    </div>
+
+    <!-- ✅ MIC BUTTON — BELOW TOP RATED MOVIES -->
+    <div class="voice-section">
+        <button class="mic-btn" id="micBtn" onclick="startVoice()">
+            <img src="IMAGES\Mic_Icon-removebg-preview.png" alt="mic" id="micIcon">
+        </button>
+        <span class="mic-hint">Tap to book by voice</span>
+    </div>
+
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+    <div class="nav-item"><span class="material-icons">home</span></div>
+    <div class="nav-item"><span class="material-icons">location_on</span></div>
+    <div class="nav-item"><span class="material-icons">person</span></div>
+</div>
+
+<!-- ✅ VOICE TOAST POPUP -->
+<div id="voiceToast">
+    <div class="toast-status"    id="toastStatus">Listening</div>
+    <div class="toast-text"      id="toastText">Speak now...</div>
+    <div class="toast-result"    id="toastResult"></div>
+    <div class="toast-not-found" id="toastNotFound"></div>
+    <button class="toast-confirm" id="toastConfirm" onclick="confirmBooking()">
+        Confirm Booking →
+    </button>
+</div>
+
+<!-- ✅ SCRIPT -->
+<script>
+/* ── MOVIE CATALOGUE ────────────────────────────────────────
+   Add every movie name here (lowercase keys for matching).
+   "page" is where to navigate on confirm.
+──────────────────────────────────────────────────────────── */
+const MOVIES = {
+    "youth":            { display: "Youth",            page: "movie.html" },
+    "dhurandhar":       { display: "Dhurandhar",       page: "movie.html" },
+    "vaazha":           { display: "Vaazha",           page: "movie.html" },
+    "project hail mary":{ display: "Project Hail Mary",page: "movie.html" },
+    "hail mary":        { display: "Project Hail Mary",page: "movie.html" },
+    "Karuppu":              { display: "Karuppu",               page: "movie.html" },
+    "kara":             { display: "Kara",              page: "movie.html" },
+    "paiyan":           { display: "Paiyan",            page: "movie.html" },
+    "revenge":          { display: "Dhurandhar",        page: "movie.html" },
+};
+
+const PRICE = 180;
+let bookingData  = null;
+let toastTimer   = null;
+
+const dateLabels = {
+    apr8:  'APR 8 (Wed)',  apr9:  'APR 9 (Thu)',
+    apr10: 'APR 10 (Fri)', apr11: 'APR 11 (Sat)',
+    apr12: 'APR 12 (Sun)'
+};
+
+/* ── TOAST HELPERS ──────────────────────────── */
+function showToast(statusClass, statusText, bodyHtml,
+                   resultHtml = '', notFoundHtml = '', showConfirm = false) {
+    clearTimeout(toastTimer);
+
+    document.getElementById('toastStatus').className = 'toast-status ' + statusClass;
+    document.getElementById('toastStatus').innerText = statusText;
+    document.getElementById('toastText').innerHTML   = bodyHtml;
+
+    const res     = document.getElementById('toastResult');
+    res.innerHTML = resultHtml;
+    res.className = 'toast-result' + (resultHtml ? ' show' : '');
+
+    const nf      = document.getElementById('toastNotFound');
+    nf.innerHTML  = notFoundHtml;
+    nf.className  = 'toast-not-found' + (notFoundHtml ? ' show' : '');
+
+    document.getElementById('toastConfirm').className =
+        'toast-confirm' + (showConfirm ? ' show' : '');
+
+    document.getElementById('voiceToast').classList.add('show');
+}
+
+function hideToast(delay = 5000) {
+    toastTimer = setTimeout(() =>
+        document.getElementById('voiceToast').classList.remove('show'), delay);
+}
+
+/* ── START VOICE ────────────────────────────── */
+function startVoice() {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) {
+        showToast('error', '⚠ Error',
+            'Speech recognition not supported in this browser.');
+        hideToast(3000);
+        return;
+    }
+
+    const rec = new SR();
+    rec.lang = 'en-US';
+    rec.start();
+
+    document.getElementById('micBtn').classList.add('listening');
+
+    showToast('listen', '🎙 Listening',
+        'Try: <em>"2 tickets for Dhurandhar, evening on Friday"</em>');
+
+    rec.onresult = (e) => {
+        const text = e.results[0][0].transcript;
+        document.getElementById('micBtn').classList.remove('listening');
+        processWithAI(text);
+    };
+
+    rec.onerror = () => {
+        document.getElementById('micBtn').classList.remove('listening');
+        showToast('error', '⚠ Error', 'Could not hear you. Please try again.');
+        hideToast(3000);
+    };
+}
+
+/* ── CLAUDE AI NLP ──────────────────────────── */
+async function processWithAI(text) {
+    showToast('think', '⚙ Thinking',
+        `<span class="loader-dot"></span>
+         <span class="loader-dot"></span>
+         <span class="loader-dot"></span>
+         <br><small style="color:#6b7194;font-style:italic;margin-top:6px;display:block">
+         "${text}"</small>`);
+
+    const movieList = Object.values(MOVIES)
+        .map(m => m.display)
+        .filter((v, i, a) => a.indexOf(v) === i) // unique
+        .join(', ');
+
+    const systemPrompt = `You are a cinema ticket booking assistant.
+Extract booking details from the user's natural language request.
+
+Available movies: ${movieList}
+
+Available dates: apr8 (Wed Apr 8), apr9 (Thu Apr 9), apr10 (Fri Apr 10), apr11 (Sat Apr 11), apr12 (Sun Apr 12)
+Available times: 9:00 AM, 1:00 PM, 3:00 PM, 6:00 PM, 10:00 PM
+
+Mapping rules:
+- morning → 9:00 AM
+- afternoon / lunch → 1:00 PM
+- 3 pm → 3:00 PM
+- evening → 6:00 PM
+- night / late → 10:00 PM
+- today → apr9, tomorrow → apr10
+- wednesday → apr8, thursday → apr9, friday → apr10, saturday → apr11, sunday → apr12
+- For movie: match the closest available movie name from the list. If no movie is mentioned or matched, use null.
+- Default if unclear: 1 seat, 1:00 PM, apr9, movie: null
+
+Respond ONLY with valid JSON — no markdown, no explanation:
+{"seats":<number>,"time":"<time string>","date":"<date key>","movie":"<exact movie name or null>","message":"<friendly 1-line confirmation mentioning movie if found>"}`;
+
+    try {
+        const res = await fetch("https://api.anthropic.com/v1/messages", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                model: "claude-sonnet-4-20250514",
+                max_tokens: 1000,
+                system: systemPrompt,
+                messages: [{ role: "user", content: text }]
+            })
+        });
+
+        const data = await res.json();
+        const raw  = data.content[0].text.trim();
+
+        let parsed;
+        try { parsed = JSON.parse(raw); }
+        catch {
+            const match = raw.match(/\{[\s\S]*\}/);
+            parsed = match ? JSON.parse(match[0]) : null;
+        }
+
+        if (!parsed) throw new Error("Parse failed");
+
+        bookingData = parsed;
+        showBookingResult(parsed);
+
+    } catch {
+        const fb = fallbackParse(text);
+        bookingData = fb;
+        showBookingResult(fb);
+    }
+}
+
+/* ── SHOW RESULT IN TOAST ───────────────────── */
+function showBookingResult(d) {
+    const total    = d.seats * PRICE;
+    const dateStr  = dateLabels[d.date] || d.date;
+
+    // Match movie from catalogue
+    const movieKey = d.movie ? d.movie.toLowerCase() : null;
+    const movieObj = movieKey ? (MOVIES[movieKey] ||
+        Object.entries(MOVIES).find(([k]) => k.includes(movieKey) ||
+        (movieKey && movieKey.includes(k)))?.[1]) : null;
+
+    let resultHtml   = '';
+    let notFoundHtml = '';
+    let canConfirm   = true;
+
+    if (movieObj) {
+        resultHtml = `
+            🎬 <span class="movie-name-tag">${movieObj.display}</span><br>
+            💺 <b>${d.seats}</b> seat(s) &nbsp;|&nbsp; 🕐 <b>${d.time}</b><br>
+            📅 ${dateStr} &nbsp;|&nbsp; 💰 ₹${total}`;
+        bookingData.resolvedMovie = movieObj;
+    } else if (d.movie && d.movie !== 'null') {
+        // AI found something but it's not in catalogue
+        resultHtml = `
+            💺 <b>${d.seats}</b> seat(s) &nbsp;|&nbsp; 🕐 <b>${d.time}</b><br>
+            📅 ${dateStr} &nbsp;|&nbsp; 💰 ₹${total}`;
+        notFoundHtml = `⚠️ "<b>${d.movie}</b>" not found.<br>
+            Available: ${Object.values(MOVIES).map(m=>m.display)
+            .filter((v,i,a)=>a.indexOf(v)===i).join(', ')}`;
+        canConfirm = false;
+    } else {
+        // No movie mentioned — show result but warn
+        resultHtml = `
+            💺 <b>${d.seats}</b> seat(s) &nbsp;|&nbsp; 🕐 <b>${d.time}</b><br>
+            📅 ${dateStr} &nbsp;|&nbsp; 💰 ₹${total}`;
+        notFoundHtml = `🎤 No movie detected. Say a movie name to continue.`;
+        canConfirm = false;
+    }
+
+    showToast('done', '✅ Ready',
+        d.message || `Booking ${d.seats} ticket(s) for ${d.time}`,
+        resultHtml, notFoundHtml, canConfirm);
+
+    if (canConfirm) {
+        speak(d.message || `Booking ${d.seats} tickets for ${movieObj?.display || ''} at ${d.time}`);
+    }
+}
+
+/* ── CONFIRM → SEAT/MOVIE PAGE ──────────────── */
+function confirmBooking() {
+    if (!bookingData) return;
+
+    const movie = bookingData.resolvedMovie;
+    const q = new URLSearchParams({
+        date:  bookingData.date,
+        time:  bookingData.time,
+        seats: bookingData.seats,
+        movie: movie ? movie.display : ''
+    });
+
+    // Go to that movie's page with booking params
+    const page = movie ? movie.page : 'seat.html';
+    window.location.href = page + "?" + q.toString();
+}
+
+/* ── FALLBACK PARSER ────────────────────────── */
+function fallbackParse(text) {
+    const t = text.toLowerCase();
+    let seats = 1, time = "1:00 PM", date = "apr9", movie = null;
+
+    // seats
+    const numMap = { one:1,two:2,three:3,four:4,five:5,six:6 };
+    const nm = t.match(/\b(\d+|one|two|three|four|five|six)\b/);
+    if (nm) seats = numMap[nm[1]] || parseInt(nm[1]) || 1;
+
+    // time
+    if      (t.includes('morning'))                         time = "9:00 AM";
+    else if (t.includes('afternoon')||t.includes('1 pm'))   time = "1:00 PM";
+    else if (t.includes('3 pm')||t.includes('3:00'))        time = "3:00 PM";
+    else if (t.includes('evening')||t.includes('6 pm'))     time = "6:00 PM";
+    else if (t.includes('night')||t.includes('10'))         time = "10:00 PM";
+
+    // date
+    if      (t.includes('wednesday'))                       date = "apr8";
+    else if (t.includes('thursday'))                        date = "apr9";
+    else if (t.includes('friday')||t.includes('apr 10'))    date = "apr10";
+    else if (t.includes('saturday')||t.includes('apr 11'))  date = "apr11";
+    else if (t.includes('sunday')||t.includes('apr 12'))    date = "apr12";
+    else if (t.includes('tomorrow'))                        date = "apr10";
+
+    // movie — check each catalogue key against spoken text
+    for (const [key, val] of Object.entries(MOVIES)) {
+        if (t.includes(key)) { movie = val.display; break; }
+    }
+
+    return {
+        seats, time, date, movie,
+        message: movie
+            ? `Booking ${seats} ticket(s) for ${movie} at ${time}`
+            : `Booking ${seats} ticket(s) at ${time}`
+    };
+}
+
+/* ── TEXT TO SPEECH ─────────────────────────── */
+function speak(msg) {
+    const u = new SpeechSynthesisUtterance(msg);
+    u.lang = 'en-US';
+    window.speechSynthesis.speak(u);
+}
+
+/* ── OPEN MOVIE PAGE (tap poster) ───────────── */
+function openMovie(name) {
+    window.location.href = `movie.html?movie=${encodeURIComponent(name)}`;
+}
+</script>
+
+<script type="module" src="./auth-guard.js"></script>
+</body>
+</html>

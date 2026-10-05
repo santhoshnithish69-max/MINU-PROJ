@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign In</title>
+<link rel="stylesheet" href="signin.css">
+</head>
+<body>
+<div class="container">
+    <!-- LOGO -->
+    <div class="logo">
+        <div class="icon">
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="square"></div>
+            <div class="legs"></div>
+        </div>
+        <div class="text">
+            <h1><span class="white">CINE</span><span class="yellow">M</span><span class="white">A</span></h1>
+            <h1 class="bar">BAR</h1>
+        </div>
+    </div>
+    <!-- SIGN IN -->
+    <h2 class="title">Sign In</h2>
+    <form class="auth-form" id="authForm">
+        <div class="input-box">
+            <span class="icon-left">✉</span>
+            <input type="email" id="email" placeholder="Email" autocomplete="email" required>
+        </div>
+        <div class="input-box">
+            <span class="icon-left">🔒</span>
+            <input type="password" id="password" placeholder="Password" autocomplete="current-password" minlength="6" required>
+        </div>
+        <p class="auth-message" id="authMessage" role="status" aria-live="polite"></p>
+        <button class="btn" id="loginButton" type="submit">Continue</button>
+        <p class="small-text">Don't Have an account yet?</p>
+        <button class="create-btn" id="signupButton" type="button">Create an account</button>
+    </form>
+</div>
+
+<script type="module" src="./signin.js"></script>
+</body>
+</html>

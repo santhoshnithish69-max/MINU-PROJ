@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Booking</title>
+
+<link rel="stylesheet" href="booking.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- POSTER -->
+    <div class="poster"></div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+        <!-- DATES -->
+        <div class="dates">
+            <div class="date" id="apr8">APR 8<br><span>WED</span></div>
+            <div class="date" id="apr9">APR 9<br><span>THUR</span></div>
+            <div class="date" id="apr10">APR 10<br><span>FRI</span></div>
+            <div class="date" id="apr11">APR 11<br><span>SAT</span></div>
+        </div>
+
+        <!-- TIMES -->
+        <div class="times">
+            <div class="time">9:00 AM</div>
+            <div class="time active">1:00 PM</div>
+            <div class="time">3:00 PM</div>
+            <div class="time">6:00 PM</div>
+            <div class="time">10:00 PM</div>
+        </div>
+
+        <!-- BUTTON -->
+        <button class="btn" onclick="goToSeats()">Reservation</button>
+
+    </div>
+
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+    <span class="material-icons" onclick="window.location.href='movie.html'">home</span>
+    <span class="material-icons">location_on</span>
+    <span class="material-icons">person</span>
+</div>
+
+<!-- ✅ SCRIPT -->
+<script>
+
+// 🎯 GET DATE FROM URL
+const params = new URLSearchParams(window.location.search);
+let selectedDate = params.get("date") || "apr9";
+
+// highlight selected date
+if (selectedDate) {
+    const el = document.getElementById(selectedDate);
+    if (el) el.classList.add("active");
+}
+
+// 🎯 DEFAULT TIME
+let selectedTime = "1:00 PM";
+
+// 🎯 TIME CLICK
+document.querySelectorAll(".time").forEach(timeEl => {
+    timeEl.addEventListener("click", function () {
+
+        document.querySelectorAll(".time").forEach(t => t.classList.remove("active"));
+        this.classList.add("active");
+
+        selectedTime = this.innerText;
+    });
+});
+
+// 🚀 GO TO SEAT PAGE
+function goToSeats() {
+
+    if (!selectedTime) {
+        alert("Please select a time");
+        return;
+    }
+
+    window.location.href =
+        `seat.html?date=${selectedDate}&time=${encodeURIComponent(selectedTime)}`;
+}
+
+</script>
+
+<script type="module" src="./auth-guard.js"></script>
+</body>
+</html>

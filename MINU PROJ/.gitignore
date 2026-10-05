@@ -1,0 +1,6 @@
+node_modules/
+dist/
+oracleJdk-26/
+.env
+.env.*
+!.env.example
